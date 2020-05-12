@@ -1,0 +1,16 @@
+[Unit]
+Description=peers web service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=peers-web
+Group=peers-web
+WorkingDirectory=/opt/peers/web
+ExecStart=/opt/peers/web/var/venv/bin/daphne -b localhost -p {{ web_daphne_port }} project.asgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+SyslogIdentifier=peers-web
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,33 @@
+---
+# Django project user.
+
+- name: Project user
+  user:
+      name: peers-web
+      shell: /bin/bash
+  tags: [dev-web]
+
+- name: Project user .vim
+  become: true
+  become_user: peers-web
+  git:
+      repo: https://github.com/tessercat/dotvim.git
+      dest: /home/peers-web/.vim
+      version: master
+      force: true
+  tags: [dev-web]
+
+- name: Project user .inputrc
+  file:
+      src: /home/peers-web/.vim/inputrc
+      dest: /home/peers-web/.inputrc
+      state: link
+  tags: [dev-web]
+
+- name: Project user .bash_aliases
+  copy:
+      src: bash_aliases
+      dest: /home/peers-web/.bash_aliases
+      owner: peers-web
+      group: peers-web
+  tags: [dev-web]

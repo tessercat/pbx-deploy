@@ -1,0 +1,21 @@
+---
+- name: Restart pushpin service
+  listen:
+      - restart pushpin service
+  systemd:
+      name: pushpin.service
+      state: restarted
+
+- name: Restart service
+  listen:
+      - restart peers web service
+  systemd:
+      name: peers-web.service
+      state: restarted
+
+- name: Restart nginx service
+  listen:
+      - restart nginx service
+  systemd:
+      name: nginx.service
+      state: restarted

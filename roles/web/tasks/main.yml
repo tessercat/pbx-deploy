@@ -1,0 +1,198 @@
+---
+
+# OS.
+
+- name: Fanout repo
+  apt_repository:
+      repo: deb https://dl.bintray.com/fanout/debian fanout-buster main
+      state: present
+      update_cache: false
+  register: fanout_repo
+  # Update
+
+- name: Fanout key
+  apt_key:
+      keyserver: hkp://keyserver.ubuntu.com:80
+      id: 379CE192D401AB61
+
+- name: Update
+  apt:
+      update-cache: true
+  when: fanout_repo is changed
+
+# apt-transport-https and software-properties-common are for pushpin.
+- name: Packages
+  apt:
+      pkg:
+          - apt-transport-https
+          - software-properties-common
+          - pushpin
+          - python3-venv
+          - python3-dev
+          - build-essential
+
+- name: User
+  user:
+      name: peers-web
+      shell: /usr/sbin/nologin
+
+
+# Pushpin.
+
+- name: Pushpin conf
+  notify:
+      - restart pushpin service
+  lineinfile:
+      dest: /etc/pushpin/pushpin.conf
+      regexp: "^http_port="
+      line: "http_port=127.0.0.1:7999"
+
+- name: Pushpin routes
+  template:
+      src: routes
+      dest: /etc/pushpin/routes
+
+
+# Django project.
+
+- name: Deployment directory
+  file:
+      path: /opt/peers
+      state: directory
+
+- name: Directory
+  file:
+      path: /opt/peers/web
+      state: directory
+      owner: peers-web
+      group: peers-web
+      mode: 0700
+
+- name: Repo
+  notify:
+      - restart peers web service
+  become: true
+  become_user: peers-web
+  git:
+      repo: "{{ web_repo }}"
+      dest: /opt/peers/web
+      version: "{{ web_version }}"
+      force: true
+      depth: 1
+  register: web_clone
+  # Clean
+  # Upgrade
+  # Requirements
+  # Migrate
+
+- name: Clean
+  file:
+      path: /opt/peers/static
+      state: absent
+  when: web_clone is changed
+
+- name: Stat static
+  stat:
+      path: /opt/peers/static
+  register: web_static
+  # Static.
+
+- name: Static
+  copy:
+      src: /opt/peers/web/static
+      dest: /opt/peers
+      remote_src: true
+      owner: www-data
+      group: www-data
+      mode: 0700
+  when: not web_static.stat.exists
+
+- name: Settings
+  notify:
+      - restart peers web service
+  become: true
+  become_user: peers-web
+  template:
+      src: settings.py
+      dest: /opt/peers/web/var/settings.py
+
+
+# Venv
+
+- name: Venv
+  notify:
+      - restart peers web service
+  become: true
+  become_user: peers-web
+  command: python3 -m venv venv
+  args:
+      chdir: /opt/peers/web/var
+      creates: /opt/peers/web/var/venv
+  register: web_venv
+  # Upgrade
+  # Requirements
+
+- name: Upgrade
+  become: true
+  become_user: peers-web
+  command: /opt/peers/web/var/venv/bin/pip install --upgrade pip wheel pip-tools
+  when: web_clone is changed or web_venv is changed
+
+- name: Requirements
+  become: true
+  become_user: peers-web
+  command: /opt/peers/web/var/venv/bin/pip-sync requirements.txt
+  args:
+      chdir: /opt/peers/web
+  when: web_clone is changed or web_venv is changed
+
+
+# Systemd service.
+
+- name: Service file
+  notify:
+      - restart peers web service
+  template:
+      src: service
+      dest: /etc/systemd/system/peers-web.service
+      mode: 0644
+
+- name: Service state
+  systemd:
+      name: peers-web.service
+      enabled: true
+      daemon-reload: true
+
+
+# Nginx servers.
+
+- name: Nginx servers
+  notify:
+      - restart nginx service
+  template:
+      src: nginx.conf
+      dest: /etc/nginx/conf.d/peers.conf
+      mode: 0644
+
+
+# Database migration.
+
+- name: Stat db
+  stat:
+      path: /opt/peers/web/var/db.sqlite3
+  register: web_db
+  # Migrate
+
+- name: Migrate
+  become: true
+  become_user: peers-web
+  command: /opt/peers/web/var/venv/bin/python manage.py migrate
+  args:
+      chdir: /opt/peers/web
+  when: web_clone is changed or not web_db.stat.exists
+
+
+# Handlers.
+
+- name: Handlers
+  meta: flush_handlers
