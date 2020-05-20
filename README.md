@@ -6,29 +6,24 @@ a simple WebRTC signaling service
 on the [stack-deploy](https://github.com/tessercat/stack-deploy) stack.
 
 The [peers-installer](https://github.com/tessercat/peers-installer) repo
-uses this repo
+includes this repo as a submodule
 to simplify automatic configuration
-of the stack and peer service
-on an Ubuntu 20.04 host.
+of the stack and peer service.
 
-
-## Overview
+## Notes
 
 The target platform
-is Ubuntu 20.04 LTS.
+is a Debian-based host.
 
 The Django project runs
 as a systemd service
-on a localhost port
 in daphne
+bound to a unix socket
 in a Python 3 venv.
 
 Nginx is configured
-to send EventStream connection requests to
-[Pushpin](https://pushpin.org),
-and to send all other requests
-directly to the Django port.
-
-Pushpin is installed from the project's apt repo,
-and it's configured to run on localhost
-and route all requests to the Django port.
+to provide an EventSource client registration endpoint via
+[nchan](https://github.com/slact/nchan)
+using the
+[X-Accel-Redirect](https://github.com/slact/nchan#x-accel-redirect)
+technique.

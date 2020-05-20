@@ -1,11 +1,4 @@
 ---
-- name: Restart pushpin service
-  listen:
-      - restart pushpin service
-  systemd:
-      name: pushpin.service
-      state: restarted
-
 - name: Restart service
   listen:
       - restart peers web service

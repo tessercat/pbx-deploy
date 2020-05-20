@@ -8,8 +8,7 @@
 
       web_repo: https://github.com/tessercat/peers-web.git
       web_version: master
-      web_nginx_port: 8900
-      web_daphne_port: 8910
+      web_port: 8900
 
   roles:
       - {role: web, tags: [web]}
