@@ -1,12 +1,12 @@
 {
     'ADMINS': (
-        ('Peers admin }}', '{{ admin_email }}'),
+        ('PBX admin }}', '{{ admin_email }}'),
     ),
     'ALLOWED_HOSTS': (
-        '{{ peers_hostname }}',
+        '{{ pbx_hostname }}',
         'localhost',
     ),
     'FIREWALL_API_PORT': {{ firewall_api_port }},
-    'SERVER_EMAIL': 'noreply@{{ peers_hostname }}',
+    'SERVER_EMAIL': 'noreply@{{ pbx_hostname }}',
     'TIME_ZONE': '{{ timezone }}',
 }

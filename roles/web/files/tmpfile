@@ -1,1 +1,1 @@
-d /run/peers 0755 peers-web peers-web -
+d /run/pbx 0755 pbx-web pbx-web -

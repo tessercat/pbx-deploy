@@ -1,14 +1,14 @@
 ---
 - name: Restart service
   listen:
-      - restart peers web service
+      - restart pbx-web service
   systemd:
-      name: peers-web.service
+      name: pbx-web.service
       state: restarted
 
 - name: Restart nginx service
   listen:
-      - restart nginx service
+      - restart nginx for pbx
   systemd:
       name: nginx.service
       state: restarted

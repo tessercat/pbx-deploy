@@ -1,5 +1,5 @@
 ---
-- name: Setup peers for dev
+- name: Setup PBX for dev
   hosts: 127.0.0.1
   connection: local
   become: false

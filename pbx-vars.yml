@@ -1,5 +1,5 @@
 ---
-# Peers role variables. Edit as required.
+# PBX role variables. Edit as required.
 
 # One of stack-vars hostname or other_hostnames. Required.
-peers_hostname: ""
+pbx_hostname: ""

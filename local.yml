@@ -1,12 +1,14 @@
 ---
-- name: Deploy peers
+- name: Deploy PBX
   hosts: 127.0.0.1
   connection: local
   become: false
   gather_facts: false
   vars:
 
-      web_repo: https://github.com/tessercat/peers-web.git
+      ngx_nchan_version: 1.18.0
+
+      web_repo: https://github.com/tessercat/pbx-web.git
       web_version: master
       web_port: 8900
 

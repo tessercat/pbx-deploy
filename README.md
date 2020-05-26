@@ -1,14 +1,14 @@
-# WebRTC peers project roles
+# WebRTC PBX project roles
 
 This repo contains
 Ansible roles to install
 a simple WebRTC signaling service
 on the [stack-deploy](https://github.com/tessercat/stack-deploy) stack.
 
-The [peers-installer](https://github.com/tessercat/peers-installer) repo
+The [pakaa-installer](https://github.com/tessercat/pakaa-installer) repo
 includes this repo as a submodule
 to simplify automatic configuration
-of the stack and peer service.
+of the stack and PBX service.
 
 ## Notes
 
@@ -21,9 +21,6 @@ in daphne
 bound to a unix socket
 in a Python 3 venv.
 
-Nginx is configured
-to provide an EventSource client registration endpoint via
+Nginx is configured to use
 [nchan](https://github.com/slact/nchan)
-using the
-[X-Accel-Redirect](https://github.com/slact/nchan#x-accel-redirect)
-technique.
+to provide a WebSocket client registration endpoint.

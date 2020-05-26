@@ -1,16 +1,16 @@
 [Unit]
-Description=peers web service
+Description=PBX web service
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-User=peers-web
-Group=peers-web
-WorkingDirectory=/opt/peers/web
-ExecStart=/opt/peers/web/var/venv/bin/daphne -u /run/peers/socket project.asgi:application
+User=pbx-web
+Group=pbx-web
+WorkingDirectory=/opt/pbx/web
+ExecStart=/opt/pbx/web/var/venv/bin/daphne -u /run/pbx/socket project.asgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
-SyslogIdentifier=peers-web
+SyslogIdentifier=pbx-web
 
 [Install]
 WantedBy=multi-user.target

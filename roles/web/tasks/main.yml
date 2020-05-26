@@ -5,7 +5,6 @@
 - name: Packages
   apt:
       pkg:
-          - libnginx-mod-nchan
           - git
           - python3-venv
           - python3-dev
@@ -13,33 +12,61 @@
 
 - name: User
   user:
-      name: peers-web
+      name: pbx-web
       shell: /usr/sbin/nologin
+
+
+# Nchan.
+
+- name: Copy
+  copy:
+      src: "ngx_nchan_module-{{ ngx_nchan_version }}.tgz"
+      dest: /etc/nginx/modules
+  register: nchan_copy
+  # Unarchive
+
+- name: Unarchive
+  notify:
+      - restart nginx for pbx
+  unarchive:
+      src: "/etc/nginx/modules/ngx_nchan_module-{{ ngx_nchan_version }}.tgz"
+      dest: /etc/nginx/modules
+      remote_src: true
+  when: nchan_copy is changed
+
+- name: Nginx
+  notify:
+      - restart nginx for pbx
+  lineinfile:
+      path: /etc/nginx/nginx.conf
+      regexp: "^load_module modules/ngx_nchan"
+      line: load_module modules/ngx_nchan_module.so;
+      insertafter: "^pid "
 
 
 # Django project.
 
 - name: Deployment directory
   file:
-      path: /opt/peers
+      path: /opt/pbx
       state: directory
 
 - name: Directory
   file:
-      path: /opt/peers/web
+      path: /opt/pbx/web
       state: directory
-      owner: peers-web
-      group: peers-web
+      owner: pbx-web
+      group: pbx-web
       mode: 0700
 
 - name: Repo
   notify:
-      - restart peers web service
+      - restart pbx-web service
   become: true
-  become_user: peers-web
+  become_user: pbx-web
   git:
       repo: "{{ web_repo }}"
-      dest: /opt/peers/web
+      dest: /opt/pbx/web
       version: "{{ web_version }}"
       force: true
       depth: 1
@@ -51,63 +78,63 @@
 
 - name: Clean
   file:
-      path: /opt/peers/static
+      path: /opt/pbx/static
       state: absent
   when: web_clone is changed
 
 - name: Stat static
   stat:
-      path: /opt/peers/static
+      path: /opt/pbx/static
   register: web_static
   # Static.
 
 - name: Static
   copy:
-      src: /opt/peers/web/static
-      dest: /opt/peers
+      src: /opt/pbx/web/static
+      dest: /opt/pbx
       remote_src: true
-      owner: www-data
-      group: www-data
+      owner: nginx
+      group: nginx
       mode: 0700
   when: not web_static.stat.exists
 
 - name: Settings
   notify:
-      - restart peers web service
+      - restart pbx-web service
   become: true
-  become_user: peers-web
+  become_user: pbx-web
   template:
       src: settings.py
-      dest: /opt/peers/web/var/settings.py
+      dest: /opt/pbx/web/var/settings.py
 
 
 # Venv
 
 - name: Venv
   notify:
-      - restart peers web service
+      - restart pbx-web service
   become: true
-  become_user: peers-web
+  become_user: pbx-web
   command: python3 -m venv venv
   args:
-      chdir: /opt/peers/web/var
-      creates: /opt/peers/web/var/venv
+      chdir: /opt/pbx/web/var
+      creates: /opt/pbx/web/var/venv
   register: web_venv
   # Upgrade
   # Requirements
 
 - name: Upgrade
   become: true
-  become_user: peers-web
-  command: /opt/peers/web/var/venv/bin/pip install --upgrade pip wheel pip-tools
+  become_user: pbx-web
+  command: /opt/pbx/web/var/venv/bin/pip install --upgrade pip wheel pip-tools
   when: web_clone is changed or web_venv is changed
 
 - name: Requirements
   become: true
-  become_user: peers-web
-  command: /opt/peers/web/var/venv/bin/pip-sync requirements.txt
+  become_user: pbx-web
+  command: /opt/pbx/web/var/venv/bin/pip-sync requirements.txt
   args:
-      chdir: /opt/peers/web
+      chdir: /opt/pbx/web
   when: web_clone is changed or web_venv is changed
 
 
@@ -116,33 +143,33 @@
 - name: Run directory
   copy:
       src: tmpfile
-      dest: /etc/tmpfiles.d/peers.conf
+      dest: /etc/tmpfiles.d/pbx.conf
       mode: 0644
 
 - name: Stat directory
   stat:
-      path: /run/peers
-  register: peers_tmpfile
+      path: /run/pbx
+  register: pbx_tmpfile
   # Systemd-tmpfiles
 
 - name: Systemd-tmpfiles
-  command: /bin/systemd-tmpfiles --create peers.conf
-  when: not peers_tmpfile.stat.exists
+  command: /bin/systemd-tmpfiles --create pbx.conf
+  when: not pbx_tmpfile.stat.exists
 
 
 # Systemd service.
 
 - name: Service file
   notify:
-      - restart peers web service
+      - restart pbx-web service
   copy:
       src: service
-      dest: /etc/systemd/system/peers-web.service
+      dest: /etc/systemd/system/pbx-web.service
       mode: 0644
 
 - name: Service state
   systemd:
-      name: peers-web.service
+      name: pbx-web.service
       enabled: true
       daemon-reload: true
 
@@ -151,10 +178,10 @@
 
 - name: Nginx servers
   notify:
-      - restart nginx service
+      - restart nginx for pbx
   template:
       src: nginx.conf
-      dest: /etc/nginx/conf.d/peers.conf
+      dest: /etc/nginx/conf.d/pbx.conf
       mode: 0644
 
 
@@ -162,16 +189,16 @@
 
 - name: Stat db
   stat:
-      path: /opt/peers/web/var/db.sqlite3
+      path: /opt/pbx/web/var/db.sqlite3
   register: web_db
   # Migrate
 
 - name: Migrate
   become: true
-  become_user: peers-web
-  command: /opt/peers/web/var/venv/bin/python manage.py migrate
+  become_user: pbx-web
+  command: /opt/pbx/web/var/venv/bin/python manage.py migrate
   args:
-      chdir: /opt/peers/web
+      chdir: /opt/pbx/web
   when: web_clone is changed or not web_db.stat.exists
 
 
