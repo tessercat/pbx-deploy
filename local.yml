@@ -10,7 +10,8 @@
 
       web_repo: https://github.com/tessercat/pbx-web.git
       web_version: master
-      web_port: 8900
+      web_daphne_port: 8900
+      web_local_port: 8910
 
   roles:
       - {role: web, tags: [web]}

@@ -138,31 +138,12 @@
   when: web_clone is changed or web_venv is changed
 
 
-# Systemd tmpfiles.
-
-- name: Run directory
-  copy:
-      src: tmpfile
-      dest: /etc/tmpfiles.d/pbx.conf
-      mode: 0644
-
-- name: Stat directory
-  stat:
-      path: /run/pbx
-  register: pbx_tmpfile
-  # Systemd-tmpfiles
-
-- name: Systemd-tmpfiles
-  command: /bin/systemd-tmpfiles --create pbx.conf
-  when: not pbx_tmpfile.stat.exists
-
-
 # Systemd service.
 
 - name: Service file
   notify:
       - restart pbx-web service
-  copy:
+  template:
       src: service
       dest: /etc/systemd/system/pbx-web.service
       mode: 0644
