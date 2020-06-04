@@ -1,8 +1,8 @@
-# WebRTC PBX project roles
+# PBX project roles
 
 This repo contains
 Ansible roles to install
-a simple WebRTC signaling service
+a PBX service
 on the [stack-deploy](https://github.com/tessercat/stack-deploy) stack.
 
 The [pakaa-installer](https://github.com/tessercat/pakaa-installer) repo
