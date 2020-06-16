@@ -16,34 +16,6 @@
       shell: /usr/sbin/nologin
 
 
-# Nchan.
-
-- name: Copy
-  copy:
-      src: "ngx_nchan_module-{{ ngx_nchan_version }}.tgz"
-      dest: /etc/nginx/modules
-  register: nchan_copy
-  # Unarchive
-
-- name: Unarchive
-  notify:
-      - restart nginx for pbx
-  unarchive:
-      src: "/etc/nginx/modules/ngx_nchan_module-{{ ngx_nchan_version }}.tgz"
-      dest: /etc/nginx/modules
-      remote_src: true
-  when: nchan_copy is changed
-
-- name: Nginx
-  notify:
-      - restart nginx for pbx
-  lineinfile:
-      path: /etc/nginx/nginx.conf
-      regexp: "^load_module modules/ngx_nchan"
-      line: load_module modules/ngx_nchan_module.so;
-      insertafter: "^pid "
-
-
 # Django project.
 
 - name: Deployment directory

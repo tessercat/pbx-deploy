@@ -15,12 +15,7 @@ of the stack and PBX service.
 The target platform
 is a Debian-based host.
 
-The Django project runs
-as a systemd service
-in daphne
-bound to a unix socket
-in a Python 3 venv.
-
-Nginx is configured to use
-[nchan](https://github.com/slact/nchan)
-to provide a WebSocket client registration endpoint.
+The Django call control project
+and the FastAPI WebSocket API application
+run as a systemd services
+in Python 3 venvs.
