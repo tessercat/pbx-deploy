@@ -1,0 +1,70 @@
+---
+- name: Packages
+  apt:
+      pkg:
+          - coturn
+
+- name: Addresses
+  addrs:
+      hostname: "{{ pbx_hostname }}"
+  register: coturn_addrs
+
+- name: Set facts
+  set_fact:
+      coturn_ipv4_addr: "{{ coturn_addrs.ipv4_addr }}"
+      coturn_ipv6_addr: "{{ coturn_addrs.ipv6_addr }}"
+
+- name: Configuration
+  notify:
+      - restart coturn service
+  template:
+      src: turnserver.conf
+      dest: /etc/turnserver.conf
+
+
+# TLS certs.
+
+- name: Directory
+  file:
+      path: /opt/pbx/coturn
+      state: directory
+      owner: turnserver
+      group: turnserver
+      mode: 0700
+
+- name: Certbot script
+  notify:
+      - restart coturn service
+  template:
+      src: certbot-post-hook
+      dest: /etc/letsencrypt/renewal-hooks/post/coturn
+      mode: 0755
+  register: coturn_certbot
+  # Run script
+
+- name: Run scipt
+  command: /etc/letsencrypt/renewal-hooks/post/coturn silent
+  when: coturn_certbot is changed
+
+- name: Stat flag
+  stat:
+      path: /opt/pbx/coturn/restart
+  register: coturn_flag
+  # Notify handler
+
+- name: Notify handler
+  notify:
+      - restart coturn service
+  command: /bin/true
+  when: coturn_flag.stat.exists
+
+- name: Remove flag
+  file:
+      path: /opt/pbx/coturn/restart
+      state: absent
+
+
+# Handlers.
+
+- name: Handlers
+  meta: flush_handlers

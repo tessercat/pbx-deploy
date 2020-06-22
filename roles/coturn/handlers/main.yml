@@ -1,0 +1,7 @@
+---
+- name: Restart service
+  listen:
+      - restart coturn service
+  systemd:
+      name: coturn.service
+      state: restarted
