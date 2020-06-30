@@ -36,14 +36,14 @@
   notify:
       - restart coturn service
   template:
-      src: certbot-post-hook
-      dest: /etc/letsencrypt/renewal-hooks/post/coturn
-      mode: 0755
+      src: hook
+      dest: /etc/letsencrypt/renewal-hooks/deploy/coturn
+      mode: 0700
   register: coturn_certbot
   # Run script
 
 - name: Run scipt
-  command: /etc/letsencrypt/renewal-hooks/post/coturn silent
+  command: /etc/letsencrypt/renewal-hooks/deploy/coturn silent
   when: coturn_certbot is changed
 
 - name: Stat flag

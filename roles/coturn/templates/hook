@@ -1,0 +1,40 @@
+#!/bin/bash
+# Copy Let's Encrypt files to coturn-friendly directory.
+# Email host admin unless the first arg is "silent".
+HOSTNAME={{ hostname }}
+CERT_DIR=/etc/letsencrypt/live/$HOSTNAME
+RESTART=false
+
+# Write fullchain.pem.
+CERT_IN="$CERT_DIR/fullchain.pem"
+CERT_OUT=/opt/pbx/coturn/cert.pem
+CERT_DIFF=$(diff -q "$CERT_IN" "$CERT_OUT" 2>&1)
+if [ ! -f "$CERT_OUT" ] || [ -n "$CERT_DIFF" ]; then
+    cp "$CERT_IN" "$CERT_OUT"
+    chmod 0600 "$CERT_OUT"
+    chown turnserver.turnserver "$CERT_OUT"
+    RESTART=true
+fi
+
+# Write privkey.pem.
+PKEY_IN="$CERT_DIR/privkey.pem"
+PKEY_OUT=/opt/pbx/coturn/pkey.pem
+PKEY_DIFF=$(diff -q "$PKEY_IN" "$PKEY_OUT" 2>&1)
+if [ ! -f "$PKEY_OUT" ] || [ -n "$PKEY_DIFF" ]; then
+    cp "$PKEY_IN" "$PKEY_OUT"
+    chmod 0600 "$PKEY_OUT"
+    chown turnserver.turnserver "$PKEY_OUT"
+    RESTART=true
+fi
+
+# Alert admin if either changes.
+RUN_DIR=/opt/pbx/coturn
+if [ $RESTART = true ]; then
+    touch "$RUN_DIR"/restart
+    if [ "$1" != 'silent' ]; then
+        ADDR="{{ admin_email }}"
+        BODY="Let's Encrypt cert renewed. Run pbx-deploy to restart coturn."
+        SUBJECT="[$HOSTNAME] coturn cert update"
+        echo "$BODY" | mail -s "$SUBJECT" "$ADDR"
+    fi
+fi
