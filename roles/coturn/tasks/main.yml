@@ -22,48 +22,6 @@
       dest: /etc/turnserver.conf
 
 
-# TLS certs.
-
-- name: Directory
-  file:
-      path: /opt/pbx/coturn
-      state: directory
-      owner: turnserver
-      group: turnserver
-      mode: 0700
-
-- name: Certbot script
-  notify:
-      - restart coturn service
-  template:
-      src: hook
-      dest: /etc/letsencrypt/renewal-hooks/deploy/coturn
-      mode: 0700
-  register: coturn_certbot
-  # Run script
-
-- name: Run scipt
-  command: /etc/letsencrypt/renewal-hooks/deploy/coturn silent
-  when: coturn_certbot is changed
-
-- name: Stat flag
-  stat:
-      path: /opt/pbx/coturn/restart
-  register: coturn_flag
-  # Notify handler
-
-- name: Notify handler
-  notify:
-      - restart coturn service
-  command: /bin/true
-  when: coturn_flag.stat.exists
-
-- name: Remove flag
-  file:
-      path: /opt/pbx/coturn/restart
-      state: absent
-
-
 # Handlers.
 
 - name: Handlers
