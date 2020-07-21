@@ -13,6 +13,11 @@
 
       coturn_listening_port: 3478
 
+      freeswitch_repo: https://github.com/tessercat/pbx-amd64.git
+      freeswitch_version: v1.10.3
+      freeswitch_verto_port: 8920
+
   roles:
       - {role: web, tags: [web]}
       - {role: coturn, tags: [coturn]}
+      - {role: freeswitch, tags: [freeswitch]}

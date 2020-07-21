@@ -1,0 +1,30 @@
+[Unit]
+Description=PBX FreeSWITCH service
+After=pbx-web.service
+Wants=pbx-web.service
+
+[Service]
+Type=forking
+PIDFile=/opt/pbx/freeswitch/run/freeswitch.pid
+PermissionsStartOnly=true
+ExecStart=/opt/pbx/freeswitch/bin/freeswitch -nonat -nc -rp
+TimeoutSec=45s
+Restart=on-failure
+WorkingDirectory=/opt/pbx/freeswitch/bin
+User=pbx-fs
+Group=pbx-fs
+LimitCORE=infinity
+LimitNOFILE=100000
+LimitNPROC=60000
+LimitSTACK=250000
+LimitRTPRIO=infinity
+LimitRTTIME=infinity
+IOSchedulingClass=realtime
+IOSchedulingPriority=2
+CPUSchedulingPolicy=rr
+CPUSchedulingPriority=89
+UMask=0007
+NoNewPrivileges=false
+
+[Install]
+WantedBy=multi-user.target
