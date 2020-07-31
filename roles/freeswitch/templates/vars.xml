@@ -4,7 +4,6 @@
   <X-PRE-PROCESS cmd="set" data="rtp_port_start=10001"/>
   <X-PRE-PROCESS cmd="set" data="rtp_port_end=20000"/>
   <X-PRE-PROCESS cmd="set" data="verto_ws_port={{ freeswitch_verto_port }}"/>
-  <X-PRE-PROCESS cmd="set" data="verto_debug_level=10"/>
 </include>
 <include>
 </include>

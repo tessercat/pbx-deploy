@@ -19,8 +19,6 @@
           - libtpl0
           - libopus0
           - liblua5.2-0
-            #- libavformat58
-            #- libswscale5
 
 - name: User
   user:
