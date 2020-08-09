@@ -8,7 +8,7 @@
       pkg:
           - libcap2-bin
 
-# FreeSWITCH modules rely on shared libraries.
+# FreeSWITCH modules rely on Debian 10 shared libraries.
 - name: Shared libraries
   apt:
       pkg:
@@ -19,6 +19,24 @@
           - libtpl0
           - libopus0
           - liblua5.2-0
+          - libsofia-sip-ua0
+
+# FreeSWITCH modules rely on FS shared libraries as of 1.10.4.
+- name: FreeSWITCH repo key
+  apt_key:
+      url: https://files.freeswitch.org/repo/deb/debian-release/fsstretch-archive-keyring.asc
+      state: present
+
+- name: FreeSWITCH repo
+  apt_repository:
+      repo: deb http://files.freeswitch.org/repo/deb/debian-release/ buster main
+
+      state: present
+
+- name: FreeSWITCH shared libraries
+  apt:
+      pkg:
+          - libspandsp6
 
 - name: User
   user:
