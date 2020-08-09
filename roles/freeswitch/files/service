@@ -4,10 +4,10 @@ After=pbx-web.service
 Wants=pbx-web.service
 
 [Service]
-Type=forking
+Type=simple
 PIDFile=/opt/pbx/freeswitch/run/freeswitch.pid
 PermissionsStartOnly=true
-ExecStart=/opt/pbx/freeswitch/bin/freeswitch -nonat -nc -rp
+ExecStart=/opt/pbx/freeswitch/bin/freeswitch -nonat -rp
 TimeoutSec=45s
 Restart=on-failure
 WorkingDirectory=/opt/pbx/freeswitch/bin
@@ -25,6 +25,7 @@ CPUSchedulingPolicy=rr
 CPUSchedulingPriority=89
 UMask=0007
 NoNewPrivileges=false
+SyslogIdentifier=pbx-fs
 
 [Install]
 WantedBy=multi-user.target

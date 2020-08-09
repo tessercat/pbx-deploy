@@ -112,6 +112,14 @@
 
 # Systemd service.
 
+- name: Service detection script
+  copy:
+      src: altp.bash
+      dest: /opt/pbx/web/var/altp
+      user: pbx-web
+      group: pbx-web
+      mode: 0700
+
 - name: Service file
   notify:
       - restart pbx-web service
