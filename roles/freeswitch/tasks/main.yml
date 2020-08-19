@@ -19,7 +19,6 @@
           - libtpl0
           - libopus0
           - liblua5.2-0
-          - libsofia-sip-ua0
 
 # FreeSWITCH modules rely on FS shared libraries as of 1.10.4.
 - name: FreeSWITCH repo key
@@ -32,11 +31,13 @@
       repo: deb http://files.freeswitch.org/repo/deb/debian-release/ buster main
 
       state: present
+      mode: 0644
 
 - name: FreeSWITCH shared libraries
   apt:
       pkg:
-          - libspandsp6
+          - libsofia-sip-ua0
+          - libspandsp3
 
 - name: User
   user:
