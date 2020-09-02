@@ -7,4 +7,5 @@
     'PBX_HOSTNAME': '{{ pbx_hostname }}',
     'SERVER_EMAIL': 'noreply@{{ pbx_hostname }}',
     'TIME_ZONE': '{{ timezone }}',
+    'VERTO_PORT': {{ freeswitch_verto_port }},
 }
