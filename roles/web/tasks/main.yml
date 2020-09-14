@@ -98,7 +98,7 @@
 - name: Upgrade
   become: true
   become_user: pbx-web
-  command: /opt/pbx/web/var/venv/bin/pip install --upgrade pip wheel pip-tools
+  command: /opt/pbx/web/var/venv/bin/pip install --upgrade pip setuptools wheel pip-tools
   when: web_clone is changed or web_venv is changed
 
 - name: Requirements
