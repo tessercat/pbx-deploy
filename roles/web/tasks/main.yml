@@ -116,7 +116,7 @@
   copy:
       src: altp.bash
       dest: /opt/pbx/web/var/altp
-      user: pbx-web
+      owner: pbx-web
       group: pbx-web
       mode: 0700
 
