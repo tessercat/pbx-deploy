@@ -37,9 +37,9 @@
   become: true
   become_user: pbx-web
   git:
-      repo: "{{ web_repo }}"
+      repo: "{{ pbx_repo }}"
       dest: /opt/pbx/web
-      version: "{{ web_version }}"
+      version: "{{ pbx_version }}"
       force: true
       depth: 1
   register: web_clone

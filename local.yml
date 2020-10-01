@@ -6,10 +6,10 @@
   gather_facts: false
   vars:
 
-      web_repo: https://github.com/tessercat/pbx-web.git
-      web_version: stable
-      web_port: 8900
-      web_local_port: 8910
+      pbx_repo: https://github.com/tessercat/pbx-web.git
+      pbx_version: stable
+      pbx_port: 8900
+      pbx_local_port: 8910
 
       coturn_listening_port: 3478
 
