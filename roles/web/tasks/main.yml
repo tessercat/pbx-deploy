@@ -65,8 +65,8 @@
       src: /opt/pbx/web/static
       dest: /opt/pbx
       remote_src: true
-      owner: nginx
-      group: nginx
+      owner: www-data
+      group: www-data
       mode: 0700
   when: not web_static.stat.exists
 
