@@ -5,29 +5,55 @@
   user:
       name: pbx-web
       shell: /bin/bash
-  tags: [dev-web]
 
-- name: Project user .vim
+- name: Project user vim
   become: true
   become_user: pbx-web
   git:
       repo: https://github.com/tessercat/dotvim.git
       dest: /home/pbx-web/.vim
-      version: master
+      version: dev
       force: true
-  tags: [dev-web]
 
-- name: Project user .inputrc
+- name: Project user inputrc
   file:
       src: /home/pbx-web/.vim/inputrc
       dest: /home/pbx-web/.inputrc
       state: link
-  tags: [dev-web]
 
-- name: Project user .bash_aliases
+- name: Project user aliases
   copy:
-      src: bash_aliases
+      src: web-aliases
       dest: /home/pbx-web/.bash_aliases
       owner: pbx-web
       group: pbx-web
-  tags: [dev-web]
+
+
+# FreeSWITCH user.
+
+- name: FreeSWITCH user
+  user:
+      name: pbx-fs
+      shell: /bin/bash
+
+- name: FreeSWITCH user vim
+  become: true
+  become_user: pbx-fs
+  git:
+      repo: https://github.com/tessercat/dotvim.git
+      dest: /home/pbx-fs/.vim
+      version: dev
+      force: true
+
+- name: FreeSWITCH user inputrc
+  file:
+      src: /home/pbx-fs/.vim/inputrc
+      dest: /home/pbx-fs/.inputrc
+      state: link
+
+- name: FreeSWITCH user aliases
+  copy:
+      src: fs-aliases
+      dest: /home/pbx-fs/.bash_aliases
+      owner: pbx-fs
+      group: pbx-fs
