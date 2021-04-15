@@ -19,6 +19,8 @@
           - libtpl0
           - libopus0
           - liblua5.2-0
+          - libavformat58  # mod_av
+          - libswscale5    # mod_av
 
 # FreeSWITCH modules rely on FS shared libraries as of 1.10.4.
 - name: FreeSWITCH repo key
