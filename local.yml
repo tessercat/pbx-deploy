@@ -11,13 +11,15 @@
       pbx_port: 8900
       pbx_local_port: 8910
 
-      stun_port: 3478
+      stun_port: 53478
 
       firewall_port: 8100
 
       freeswitch_repo: https://github.com/tessercat/pbx-amd64.git
       freeswitch_version: v1.10.6
       freeswitch_verto_port: 8920
+      freeswitch_rtp_port_start: 10000
+      freeswitch_rtp_port_end: 20000
 
   roles:
       - {role: web, tags: [web]}
