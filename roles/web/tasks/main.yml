@@ -70,14 +70,29 @@
       mode: 0700
   when: not web_static.stat.exists
 
-- name: Settings
+- name: Globals
+  notify:
+      - restart pbx-web service
+  become: true
+  become_user: pbx-web
+  copy:
+      src: django_globals.py
+      dest: /opt/pbx/web/var/django_globals.py
+      owner: pbx-web
+      group: pbx-web
+      mode: 0600
+
+- name: Ports
   notify:
       - restart pbx-web service
   become: true
   become_user: pbx-web
   template:
-      src: settings.py
-      dest: /opt/pbx/web/var/settings.py
+      src: ports.py
+      dest: /opt/pbx/web/var/ports.py
+      owner: pbx-web
+      group: pbx-web
+      mode: 0600
 
 
 # Venv
