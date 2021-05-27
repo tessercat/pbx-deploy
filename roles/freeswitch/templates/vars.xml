@@ -1,5 +1,6 @@
 <include>
   <X-PRE-PROCESS cmd="set" data="hostname={{ pbx_hostname }}"/>
+  <X-PRE-PROCESS cmd="set" data="version={{ freeswitch_version }}"/>
   <X-PRE-PROCESS cmd="set" data="curl_gateway_url=http://localhost:{{ pbx_local_port }}/fsapi"/>
   <X-PRE-PROCESS cmd="set" data="rtp_port_start={{ freeswitch_rtp_port_start }}"/>
   <X-PRE-PROCESS cmd="set" data="rtp_port_end={{ freeswitch_rtp_port_end }}"/>
