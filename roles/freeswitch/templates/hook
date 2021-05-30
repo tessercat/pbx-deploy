@@ -33,7 +33,7 @@ if [ -n "$TLS_DIFF" ] || [ -n "$WSS_DIFF" ]; then
     touch $RUN_DIR/restart
     if [ "$1" != 'silent' ]; then
         ADDR="{{ admin_email }}"
-        BODY="Let's Encrypt cert renewed. Restart FreeSWITCH."
+        BODY="Let's Encrypt cert renewed. Restart FreeSWITCH by hand."
         SUBJECT="[$HOSTNAME] FreeSWITCH cert update"
         echo "$BODY" | mail -s "$SUBJECT" "$ADDR"
     fi
